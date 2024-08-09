@@ -1,0 +1,1 @@
+python -m streamlit run C:\Users\ASUS\Desktop\programing\创赛营-网络根据地\Lagesan's网络根据地\David的网络根据地.py
