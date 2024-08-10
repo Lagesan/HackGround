@@ -1,6 +1,7 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from PIL import Image
-import requests, datetime
+import requests, json
 
 def fr_page():
     st.markdown("# Recommendation")
@@ -233,8 +234,50 @@ def register_page():
             save_user(username, password)
             st.success("Registration successful! Please login.")
 
+def spark_ai(chat):
+    username = st.session_state.get('username', 'Guest')
+    url = "https://spark-api-open.xf-yun.com/v1/chat/completions"
+    data = {
+            "model": "general",
+            "messages": [
+                {
+                    "role": 'user',
+                    "content": chat
+                }
+            ],
+               "stream": False
+        }
+    header = {
+        "Authorization": "Bearer 1c427588380d4d2f20d5efd75e9a52a0:ZmRhMTM4MDBmZWRmMjE3YWE2ODEyNDZm"
+    }
+    st.markdown("#### AI")
+    with st.spinner("AI is thinking..."):
+        response = requests.post(url, headers=header, json=data)
+        response.encoding = "utf-8"
+        try:
+            response_data = response.json()
+            content = response_data['choices'][0]['message']['content']
+            st.markdown(content)
+        except:
+            st.error("Error! Try again after a while.")
+        # except (json.JSONDecodeError, KeyError) as e:
+        #     st.error(f"Error parsing response: {e}")
+        #     response_data = response.json()
+        #     st.markdown(response_data['choices'][0])
+
+
 def about_page():
-    st.write("ℹ️ About ℹ️")
+    st.write("## Spark Model AI(NOT support context)")
+    speak_info = st.chat_input("Let's chat!")
+    st.write("AI can make mistakes. Check import Info. \n If there is a TimeoutError, please try again after a while.")
+    if speak_info:
+        ask1, ask2 = st.columns([1.5,1])
+        with ask2:
+            st.markdown('''
+                        ```
+                        '''+speak_info)
+        spark_ai(speak_info)
+    
 
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
@@ -254,7 +297,7 @@ if not st.session_state['logged_in']:
             st.session_state['page'] = 'Login'
             st.rerun()
 else:
-    page = st.sidebar.radio("My Page", ['Favorites Recommendation', 'My images processing tools', 'My Smart Dictionary', 'My Discussion Area', 'About'])
+    page = st.sidebar.radio("My Page", ['Favorites Recommendation', 'My images processing tools', 'My Smart Dictionary', 'My Discussion Area', 'Spark Lite AI'])
     if page == 'Favorites Recommendation':
         fr_page()
     elif page == 'My images processing tools':
@@ -263,5 +306,5 @@ else:
         smart_dict_page()
     elif page == 'My Discussion Area':
         discussion_area_page()
-    elif page == 'About':
+    elif page == 'Spark Lite AI':
         about_page()
