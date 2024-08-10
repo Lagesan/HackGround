@@ -180,9 +180,6 @@ def discussion_area_page():
         with open('leave_messages.txt', 'w', encoding='utf-8') as f:
             f.write('\n'.join(['#'.join(msg) for msg in message_list]))
         st.rerun()
-    else:
-        # return
-        st.error("Message cannot be empty.")
 USER_FILE = 'usr.txt'
 def load_users():
     try:
