@@ -174,7 +174,7 @@ def discussion_area_page():
 
     username = st.session_state.get('username', 'Guest')
     st.write(f"You are logged in as: {username}")
-    new_message = st.chat_input('Let's Chat!')
+    new_message = st.chat_input("Let's chat!")
     if new_message and new_message != '':
         message_list.append([str(newd), username, new_message])
         with open('leave_messages.txt', 'w', encoding='utf-8') as f:
