@@ -172,7 +172,7 @@ def discussion_area_page():
                 with st.chat_message('🙂'):
                     st.write(i[1], ':', i[2])
 
-    username = st.session_state.get('username', 'Guest')
+    username = input("请输入你的用户名（登录系统出现问题，暂时用该方法代替）")
     st.write(f"You are logged in as: {username}")
     new_message = st.chat_input("Let's chat!")
     if new_message and new_message != '':
@@ -180,53 +180,8 @@ def discussion_area_page():
         with open('leave_messages.txt', 'w', encoding='utf-8') as f:
             f.write('\n'.join(['#'.join(msg) for msg in message_list]))
         st.rerun()
-USER_FILE = 'usr.txt'
-def load_users():
-    try:
-        with open(USER_FILE, 'r', encoding='utf-8') as f:
-            users = {line.split('#')[0]: line.split('#')[1] for line in f.readlines()}
-        return users
-    except FileNotFoundError:
-        return {}
-def save_user(username, password):
-    with open(USER_FILE, 'a', encoding='utf-8') as f:
-        f.write(f"\n{username}#{password}")
-        
-def login_page():
-    st.markdown("# Login")
-    username = st.text_input("Username", key="login_username")
-    password = st.text_input("Password", type="password", key="login_password")
-    
-    if st.button("Login"):
-        users = load_users()
-        if username in users and users[username] == password:
-            st.session_state['logged_in'] = True
-            st.session_state['username'] = username
-            st.success("Logged in successfully!")
-        else:
-            st.error("Invalid username or password.")
-
-def register_page():
-    st.markdown("# Register")
-    username = st.text_input("Username", key="register_username")
-    password = st.text_input("Password", type="password", key="register_password")
-    confirm_password = st.text_input("Confirm Password", type="password", key="register_confirm_password")
-    if st.button("Register"):
-        if not username or not password or not confirm_password:
-            st.error("Please fill all fields.")
-            return
-        if password != confirm_password:
-            st.error("Passwords do not match.")
-            return
-        users = load_users()
-        if username in users:
-            st.error("Username already exists. Please choose another one.")
-        else:
-            save_user(username, password)
-            st.success("Registration successful! Please login.")
 
 def spark_ai(chat):
-    username = st.session_state.get('username', 'Guest')
     url = "https://spark-api-open.xf-yun.com/v1/chat/completions"
     data = {
             "model": "general",
@@ -268,34 +223,15 @@ def about_page():
                         ```
                         '''+speak_info)
         spark_ai(speak_info)
-    
 
-if 'logged_in' not in st.session_state:
-    st.session_state['logged_in'] = False
-
-if 'page' not in st.session_state:
-    st.session_state['page'] = 'Login'
-
-if not st.session_state['logged_in']:
-    if st.session_state['page'] == 'Login':
-        login_page()
-        if st.button("Go to Register"):
-            st.session_state['page'] = 'Register'
-            st.rerun()
-    elif st.session_state['page'] == 'Register':
-        register_page()
-        if st.button("Go to Login"):
-            st.session_state['page'] = 'Login'
-            st.rerun()
-else:
-    page = st.sidebar.radio("My Page", ['Favorites Recommendation', 'My images processing tools', 'My Smart Dictionary', 'My Discussion Area', 'Spark Lite AI'])
-    if page == 'Favorites Recommendation':
-        fr_page()
-    elif page == 'My images processing tools':
-        edit_img()
-    elif page == 'My Smart Dictionary':
-        smart_dict_page()
-    elif page == 'My Discussion Area':
-        discussion_area_page()
-    elif page == 'Spark Lite AI':
-        about_page()
+page = st.sidebar.radio("My Page", ['Favorites Recommendation', 'My images processing tools', 'My Smart Dictionary', 'My Discussion Area', 'Spark Lite AI'])
+if page == 'Favorites Recommendation':
+    fr_page()
+elif page == 'My images processing tools':
+    edit_img()
+elif page == 'My Smart Dictionary':
+    smart_dict_page()
+elif page == 'My Discussion Area':
+    discussion_area_page()
+elif page == 'Spark Lite AI':
+    about_page()
