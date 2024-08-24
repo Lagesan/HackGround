@@ -172,10 +172,10 @@ def discussion_area_page():
                 with st.chat_message('🙂'):
                     st.write(i[1], ':', i[2])
 
-    username = input("请输入你的用户名（登录系统出现问题，暂时用该方法代替）")
+    username = st.text_input("请输入你的用户名（登录系统出现问题，暂时用该方法代替）")
     st.write(f"You are logged in as: {username}")
     new_message = st.chat_input("Let's chat!")
-    if new_message and new_message != '':
+    if new_message and new_message != '' and username != '':
         message_list.append([str(newd), username, new_message])
         with open('leave_messages.txt', 'w', encoding='utf-8') as f:
             f.write('\n'.join(['#'.join(msg) for msg in message_list]))
