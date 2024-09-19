@@ -1,2 +1,0 @@
-1#system#Start Chat!
-2#test#a
